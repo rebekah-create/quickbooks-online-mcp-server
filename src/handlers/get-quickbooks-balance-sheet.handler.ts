@@ -1,4 +1,4 @@
-import { quickbooksClient } from "../clients/quickbooks-client.js";
+import { QuickbooksClient } from "../clients/quickbooks-client.js";
 import { ToolResponse } from "../types/tool-response.js";
 import { formatError } from "../helpers/format-error.js";
 
@@ -11,8 +11,8 @@ export interface BalanceSheetOptions {
 
 export async function getQuickbooksBalanceSheet(options: BalanceSheetOptions): Promise<ToolResponse<any>> {
   try {
-    await quickbooksClient.authenticate();
-    const quickbooks = quickbooksClient.getQuickbooks();
+    const quickbooks = await QuickbooksClient.getInstance();
+
     // Balance Sheet is a point-in-time report — end_date is the "as of" date.
     // start_date is not a valid QBO param for Balance Sheet and was causing
     // end_date to be silently ignored in some configurations.
@@ -23,8 +23,11 @@ export async function getQuickbooksBalanceSheet(options: BalanceSheetOptions): P
 
     return new Promise((resolve) => {
       (quickbooks as any).reportBalanceSheet(params, (err: any, report: any) => {
-        if (err) resolve({ result: null, isError: true, error: formatError(err) });
-        else resolve({ result: report, isError: false, error: null });
+        if (err) {
+          resolve({ result: null, isError: true, error: formatError(err) });
+        } else {
+          resolve({ result: report, isError: false, error: null });
+        }
       });
     });
   } catch (error) {
