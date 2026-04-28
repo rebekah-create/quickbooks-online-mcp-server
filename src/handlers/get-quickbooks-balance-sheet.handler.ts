@@ -13,11 +13,11 @@ export async function getQuickbooksBalanceSheet(options: BalanceSheetOptions): P
   try {
     const quickbooks = await QuickbooksClient.getInstance();
 
-    // Balance Sheet is a point-in-time report — end_date is the "as of" date.
-    // start_date is not a valid QBO param for Balance Sheet and was causing
-    // end_date to be silently ignored in some configurations.
+    // Balance Sheet is a point-in-time report. The QBO API uses "date" (not
+    // "end_date") for the as-of date. Passing "end_date" is silently ignored
+    // by QBO and causes the report to always return today's balance sheet.
     const params: Record<string, any> = {};
-    if (options.end_date) params.end_date = options.end_date;
+    if (options.end_date) params.date = options.end_date;
     if (options.accounting_method) params.accounting_method = options.accounting_method;
     if (options.summarize_column_by) params.summarize_column_by = options.summarize_column_by;
 

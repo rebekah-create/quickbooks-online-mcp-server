@@ -36,12 +36,25 @@ describe('Report Handlers', () => {
       expect(result.result).toEqual(mockReport);
     });
 
+    it('should pass "date" (not "end_date") to reportBalanceSheet', async () => {
+      const mockReport = { Header: {} };
+      let capturedParams: any;
+      mockQuickBooksInstance.reportBalanceSheet.mockImplementation((params: any, cb: any) => {
+        capturedParams = params;
+        cb(null, mockReport);
+      });
+
+      await getQuickbooksBalanceSheet({ end_date: '2024-12-31' });
+
+      expect(capturedParams.date).toBe('2024-12-31');
+      expect(capturedParams.end_date).toBeUndefined();
+    });
+
     it('should handle all options', async () => {
       const mockReport = { Header: {} };
       mockQuickBooksInstance.reportBalanceSheet.mockImplementation((params: any, cb: any) => cb(null, mockReport));
 
       const result = await getQuickbooksBalanceSheet({
-        start_date: '2024-01-01',
         end_date: '2024-12-31',
         accounting_method: 'Accrual',
         summarize_column_by: 'Month'
