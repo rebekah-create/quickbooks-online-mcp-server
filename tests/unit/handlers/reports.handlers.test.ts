@@ -49,6 +49,19 @@ describe('Report Handlers', () => {
       expect(capturedParams.start_date).toBe('2024-01-01');
     });
 
+    it('should pass only start_date when end_date is absent', async () => {
+      let capturedParams: any;
+      mockQuickBooksInstance.reportBalanceSheet.mockImplementation((params: any, cb: any) => {
+        capturedParams = params;
+        cb(null, { Header: {} });
+      });
+
+      await getQuickbooksBalanceSheet({ start_date: '2024-01-01' });
+
+      expect(capturedParams.start_date).toBe('2024-01-01');
+      expect(capturedParams.end_date).toBeUndefined();
+    });
+
     it('should handle all options', async () => {
       const mockReport = { Header: {} };
       mockQuickBooksInstance.reportBalanceSheet.mockImplementation((params: any, cb: any) => cb(null, mockReport));
