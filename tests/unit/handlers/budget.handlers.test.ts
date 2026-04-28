@@ -1,8 +1,9 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import { mockQuickbooksClient, mockQuickBooksInstance, resetAllMocks } from '../../mocks/quickbooks.mock';
+import { mockQuickbooksClient, mockQuickBooksInstance, MockQuickbooksClient, mockGetInstance, resetAllMocks } from '../../mocks/quickbooks.mock';
 
 jest.unstable_mockModule('../../../src/clients/quickbooks-client', () => ({
   quickbooksClient: mockQuickbooksClient,
+  QuickbooksClient: MockQuickbooksClient,
 }));
 
 const { searchQuickbooksBudgets } = await import('../../../src/handlers/search-quickbooks-budgets.handler');
@@ -70,7 +71,7 @@ describe('Budget Handlers', () => {
     });
 
     it('should propagate authentication errors', async () => {
-      (mockQuickbooksClient.authenticate as any).mockRejectedValue(new Error('Auth failed'));
+      mockGetInstance.mockRejectedValue(new Error('Auth failed'));
 
       const result = await searchQuickbooksBudgets({});
 

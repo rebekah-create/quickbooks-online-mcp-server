@@ -221,6 +221,12 @@ export const mockQuickbooksClient = {
   refreshAccessToken: jest.fn<() => Promise<{ access_token: string; expires_in: number }>>().mockResolvedValue({ access_token: 'mock-token', expires_in: 3600 }),
 };
 
+// Static mock for QuickbooksClient class — used by handlers that call getInstance()
+export const mockGetInstance = jest.fn<() => Promise<typeof mockQuickBooksInstance>>().mockResolvedValue(mockQuickBooksInstance);
+export const MockQuickbooksClient = {
+  getInstance: mockGetInstance,
+};
+
 // Helper to create a successful callback mock
 export function mockSuccessCallback<T>(data: T) {
   return (...args: unknown[]) => {
@@ -256,4 +262,6 @@ export function resetAllMocks() {
   mockQuickbooksClient.getQuickbooks.mockReset();
   (mockQuickbooksClient.getQuickbooks as any).mockReturnValue(mockQuickBooksInstance);
   (mockQuickbooksClient.authenticate as any).mockResolvedValue(mockQuickBooksInstance);
+  mockGetInstance.mockReset();
+  mockGetInstance.mockResolvedValue(mockQuickBooksInstance);
 }
