@@ -14,11 +14,18 @@ export async function getQuickbooksBalanceSheet(options: BalanceSheetOptions): P
     // Use getInstance() so token freshness is checked on every call
     const quickbooks = await QuickbooksClient.getInstance();
 
-    // Build params — Balance Sheet is a point-in-time report.
-    // end_date is the "as of" date. start_date is not a valid QBO param
-    // for Balance Sheet and is intentionally excluded.
+    // Balance Sheet is a point-in-time ("as of") report. QBO silently ignores
+    // end_date unless start_date is also present — passing only end_date always
+    // returns the default "this calendar year-to-date" sheet. When end_date is
+    // supplied without start_date we default start_date to Jan 1 of the same
+    // year, which is the conventional Balance Sheet reporting window.
     const params: Record<string, any> = {};
-    if (options.end_date) params.end_date = options.end_date;
+    if (options.end_date) {
+      params.end_date = options.end_date;
+      params.start_date = options.start_date || `${options.end_date.substring(0, 4)}-01-01`;
+    } else if (options.start_date) {
+      params.start_date = options.start_date;
+    }
     if (options.accounting_method) params.accounting_method = options.accounting_method;
     if (options.summarize_column_by) params.summarize_column_by = options.summarize_column_by;
 
