@@ -1,9 +1,10 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import { mockQuickbooksClient, mockQuickBooksInstance, resetAllMocks } from '../../mocks/quickbooks.mock';
+import { mockQuickbooksClient, mockQuickBooksInstance, MockQuickbooksClient, mockGetInstance, resetAllMocks } from '../../mocks/quickbooks.mock';
 
 // ESM-compatible module mocking
 jest.unstable_mockModule('../../../src/clients/quickbooks-client', () => ({
   quickbooksClient: mockQuickbooksClient,
+  QuickbooksClient: MockQuickbooksClient,
 }));
 
 // Dynamic imports after mock setup
@@ -70,7 +71,7 @@ describe('Class Handlers', () => {
     });
 
     it('should handle authentication errors', async () => {
-      (mockQuickbooksClient.authenticate as any).mockRejectedValue(new Error('Auth failed'));
+      mockGetInstance.mockRejectedValue(new Error('Auth failed'));
 
       const result = await getQuickbooksClass('123');
 
@@ -109,7 +110,7 @@ describe('Class Handlers', () => {
     });
 
     it('should handle authentication errors', async () => {
-      (mockQuickbooksClient.authenticate as any).mockRejectedValue(new Error('Auth failed'));
+      mockGetInstance.mockRejectedValue(new Error('Auth failed'));
 
       const result = await updateQuickbooksClass({ id: '123', sync_token: '0', name: 'Test' });
 
@@ -163,7 +164,7 @@ describe('Class Handlers', () => {
     });
 
     it('should handle authentication errors', async () => {
-      (mockQuickbooksClient.authenticate as any).mockRejectedValue(new Error('Auth failed'));
+      mockGetInstance.mockRejectedValue(new Error('Auth failed'));
 
       const result = await searchQuickbooksClasses({});
 
@@ -174,7 +175,7 @@ describe('Class Handlers', () => {
 
   describe('createQuickbooksClass', () => {
     it('should handle authentication errors', async () => {
-      (mockQuickbooksClient.authenticate as any).mockRejectedValue(new Error('Auth failed'));
+      mockGetInstance.mockRejectedValue(new Error('Auth failed'));
 
       const result = await createQuickbooksClass({ name: 'Test' });
 
