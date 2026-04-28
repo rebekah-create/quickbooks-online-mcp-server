@@ -14,7 +14,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Claude Code, Cursor) whose working directory is not the project root —
 // without this, dotenv silently finds nothing and startup fails.
 // (from PR #40)
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
+//
+// Use override: true so that values from .env always win over any empty-string
+// placeholders a host app (e.g. Claude Desktop) may inject via its env config.
+// This prevents the server from starting with blank REFRESH_TOKEN / REALM_ID
+// even when the host config has those keys set to "".
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env'), override: true });
 
 const client_id = process.env.QUICKBOOKS_CLIENT_ID;
 const client_secret = process.env.QUICKBOOKS_CLIENT_SECRET;
