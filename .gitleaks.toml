@@ -1,0 +1,20 @@
+# gitleaks config — extends the default rule set
+# https://github.com/gitleaks/gitleaks
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Common false-positive paths"
+paths = [
+  '''(.*?)(jpg|jpeg|png|gif|svg|webp|ico|pdf|lock|min\.js|min\.css)$''',
+  '''node_modules/''',
+  '''\.venv/''',
+  '''dist/''',
+  '''build/''',
+  '''\.terraform/''',
+  '''pnpm-lock\.yaml$''',
+  '''package-lock\.json$''',
+  '''yarn\.lock$''',
+  '''poetry\.lock$''',
+  '''uv\.lock$''',
+]
