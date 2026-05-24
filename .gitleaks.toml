@@ -4,7 +4,7 @@
 useDefault = true
 
 [allowlist]
-description = "Common false-positive paths"
+description = "Common false-positive paths and patterns"
 paths = [
   '''(.*?)(jpg|jpeg|png|gif|svg|webp|ico|pdf|lock|min\.js|min\.css)$''',
   '''node_modules/''',
@@ -17,4 +17,11 @@ paths = [
   '''yarn\.lock$''',
   '''poetry\.lock$''',
   '''uv\.lock$''',
+]
+# Lines containing these patterns are parameter NAMES, not secrets.
+regexes = [
+  '''WithDecryption\s*=\s*True''',         # AWS SSM parameter retrieval
+  '''ssm[._]get_parameter''',              # alt boto3 style
+  '''secretsmanager[._]get_secret_value''', # AWS Secrets Manager retrieval
+  '''param(eter)?_name\s*=''',              # explicit parameter-name assignment
 ]
